@@ -70,3 +70,16 @@ def test_create_invalid_bear_type():
     data = {"bear_type": "RED", "bear_name": "Firefox", "bear_age": 10}
     response = requests.post(f"{BASE_URL}/bear", json=data)
     assert response.status_code == 500  # Подсмотрел, что сервис возвращает 500 для невалидных данных
+
+def test_update_nonexistent_bear():
+    """Тест обновления медведя"""
+    bear_id = 77777
+    new_data = {"bear_type": "GUMMY", "bear_name": "Gummy", "bear_age": 2}
+    update_response = requests.put(f"{BASE_URL}/bear/{bear_id}", json=new_data)
+    assert update_response.status_code == 500
+
+def test_delete_nonexistent_bear():
+    """Тест удаления несуществующего медведя"""
+    bear_id = 101010
+    delete_response = requests.delete(f"{BASE_URL}/bear/{bear_id}")
+    assert delete_response.status_code == 404

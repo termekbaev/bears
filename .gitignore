@@ -1,2 +1,6 @@
 venv/
 .venv/
+idea/
+.idea/
+
+#test_results.txt

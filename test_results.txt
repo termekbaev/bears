@@ -1,0 +1,98 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-8.3.5, pluggy-1.5.0 -- "Some path :-)"
+cachedir: .pytest_cache
+rootdir: "Some dir :-)"
+collecting ... collected 9 items
+
+test_api.py::test_create_black_bear PASSED                               [ 11%]
+test_api.py::test_create_polar_bear PASSED                               [ 22%]
+test_api.py::test_get_correct_bear FAILED                                [ 33%]
+test_api.py::test_get_incorrect_bear FAILED                              [ 44%]
+test_api.py::test_update_bear FAILED                                     [ 55%]
+test_api.py::test_delete_bear FAILED                                     [ 66%]
+test_api.py::test_create_invalid_bear_type PASSED                        [ 77%]
+test_api.py::test_update_nonexistent_bear PASSED                         [ 88%]
+test_api.py::test_delete_nonexistent_bear FAILED                         [100%]
+
+================================== FAILURES ===================================
+____________________________ test_get_correct_bear ____________________________
+
+    def test_get_correct_bear():
+        """���� ��������� ���������� �������"""
+        data = {"bear_type": "BROWN", "bear_name": "Browny", "bear_age": 10}
+        create_response = requests.post(f"{BASE_URL}/bear", json=data)
+        bear_id = create_response.text
+        response = requests.get(f"{BASE_URL}/bear/{bear_id}")
+        assert response.status_code == 200
+        bear = response.json()
+        assert bear["bear_type"] == "BROWN"
+>       assert bear["bear_name"] == "Browny"
+E       AssertionError: assert 'BROWNY' == 'Browny'
+E         
+E         - Browny
+E         + BROWNY
+
+test_api.py:36: AssertionError
+___________________________ test_get_incorrect_bear ___________________________
+
+    def test_get_incorrect_bear():
+        """���� ��������� �� ���������� �������"""
+        bear_id = 777
+        response = requests.get(f"{BASE_URL}/bear/{bear_id}")
+>       assert response.status_code == 404
+E       assert 200 == 404
+E        +  where 200 = <Response [200]>.status_code
+
+test_api.py:43: AssertionError
+______________________________ test_update_bear _______________________________
+
+    def test_update_bear():
+        """���� ���������� �������"""
+        data = {"bear_type": "BROWN", "bear_name": "Browny", "bear_age": 10}
+        create_response = requests.post(f"{BASE_URL}/bear", json=data)
+        bear_id = create_response.text
+        new_data = {"bear_type": "GUMMY", "bear_name": "Gummy", "bear_age": 2}
+        update_response = requests.put(f"{BASE_URL}/bear/{bear_id}", json=new_data)
+        assert update_response.status_code == 200
+        get_response = requests.get(f"{BASE_URL}/bear/{bear_id}")
+        updated_bear = get_response.json()
+>       assert updated_bear["bear_type"] == "GUMMY"
+E       AssertionError: assert 'BROWN' == 'GUMMY'
+E         
+E         - GUMMY
+E         + BROWN
+
+test_api.py:55: AssertionError
+______________________________ test_delete_bear _______________________________
+
+    def test_delete_bear():
+        """���� �������� �������"""
+        data = {"bear_type": "BLACK", "bear_name": "Johnny", "bear_age": 3}
+        create_response = requests.post(f"{BASE_URL}/bear", json=data)
+        bear_id = create_response.text
+        delete_response = requests.delete(f"{BASE_URL}/bear/{bear_id}")
+        assert delete_response.status_code == 200
+        get_response = requests.get(f"{BASE_URL}/bear/{bear_id}")
+>       assert get_response.status_code == 404
+E       assert 200 == 404
+E        +  where 200 = <Response [200]>.status_code
+
+test_api.py:66: AssertionError
+________________________ test_delete_nonexistent_bear _________________________
+
+    def test_delete_nonexistent_bear():
+        """���� �������� ��������������� �������"""
+        bear_id = 101010
+        delete_response = requests.delete(f"{BASE_URL}/bear/{bear_id}")
+>       assert delete_response.status_code == 404
+E       assert 200 == 404
+E        +  where 200 = <Response [200]>.status_code
+
+test_api.py:85: AssertionError
+=========================== short test summary info ===========================
+FAILED test_api.py::test_get_correct_bear - AssertionError: assert 'BROWNY' =...
+FAILED test_api.py::test_get_incorrect_bear - assert 200 == 404
+FAILED test_api.py::test_update_bear - AssertionError: assert 'BROWN' == 'GUMMY'
+FAILED test_api.py::test_delete_bear - assert 200 == 404
+FAILED test_api.py::test_delete_nonexistent_bear - assert 200 == 404
+========================= 5 failed, 4 passed in 1.07s =========================
