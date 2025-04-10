@@ -1,6 +1,4 @@
-venv/
-.venv/
-idea/
-.idea/
+.venv/*
+.idea/*
 
 #test_results.txt
